@@ -1,4 +1,4 @@
-require_relative 'boot'
+require_relative "boot"
 
 require "rails"
 # Pick the frameworks you want:
@@ -18,6 +18,11 @@ require "rails/test_unit/railtie"
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
+
+# Load .env file in development and test environments
+if Rails.env.development? || Rails.env.test?
+  Dotenv::Railtie.load
+end
 
 module ShoppingStoreApiPg
   class Application < Rails::Application

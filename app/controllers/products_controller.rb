@@ -1,6 +1,6 @@
 class ProductsController < ApplicationController
-  before_action :set_product, only: [:show, :update, :destroy]
-  before_action :authenticate_user!, only: [:create, :update, :destroy]
+  before_action :set_product, only: [:show, :update, :upload_image, :destroy]
+  before_action :authenticate_user!, only: [:create, :update, :upload_image, :destroy]
 
   # GET /products
   def index
@@ -34,6 +34,16 @@ class ProductsController < ApplicationController
     end
   end
 
+  # UPDATE /products/1
+  def upload_image
+    @product.image.attach(io: params[:image], filename: @product.name)
+    if @product.save
+      render json: @product
+    else
+      render json: @product.errors, status: :unprocessable_entity
+    end
+  end
+
   # DELETE /products/1
   def destroy
     @product.destroy
@@ -48,6 +58,6 @@ class ProductsController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def product_params
-    params.require(:product).permit(:name, :state, :price, :image_uri, :available, :user_id, :category_id)
+    params.require(:product).permit(:name, :state, :price, :available, :user_id, :category_id)
   end
 end
